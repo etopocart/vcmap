@@ -14,14 +14,7 @@ RUN npm run build
 
 RUN npm run build-preview
 
-FROM node:latest AS server
-
-WORKDIR /app
-
-COPY --from=builder /app/dist /app/
-
-RUN npm install -g http-server
-
-EXPOSE 8080
-
-CMD ["http-server", "/dist"]
+FROM nginx:stable-alpine as production-stage
+COPY --from=builder /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
